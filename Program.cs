@@ -1,5 +1,6 @@
 using ExaminationSystem.Core.Model;
 using ExaminationSystem.Data;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,8 +9,21 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 var connectionString=builder.Configuration.GetConnectionString("DefaultConnection");
+var myPolicy="myPolicy";
 builder.Services.AddDbContext<ApplicationDbContext>(option=>option.UseSqlServer(connectionString));
-
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+	.AddEntityFrameworkStores<ApplicationDbContext>()
+	.AddDefaultTokenProviders();
+builder.Services.AddCors(option =>
+{
+	option.AddPolicy(myPolicy,
+		builder =>
+		{
+			builder.AllowAnyOrigin();
+			builder.AllowAnyMethod();
+			builder.AllowAnyMethod();
+		});
+});
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -26,6 +40,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseRouting();
+app.UseCors(myPolicy);
 
 app.UseAuthorization();
 

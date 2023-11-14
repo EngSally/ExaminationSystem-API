@@ -8,9 +8,9 @@ namespace ExaminationSystem.Controllers
 	public class AccountController : ControllerBase
 	{
 		[HttpPost("register")]
-		public IActionResult Register()
+		public IActionResult Register([FromQuery]int id)
 		{
-			return Ok();
+			return Ok(id);
 		}
 	}
 }
