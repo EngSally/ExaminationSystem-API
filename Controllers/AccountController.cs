@@ -22,10 +22,35 @@ namespace ExaminationSystem.Controllers
 			_configuration=configuration;
 		}
 		[HttpPost("register")]
-		public IActionResult Register(RegisterDTO userModel)
+		public  async Task<IActionResult> Register(RegisterDTO userModel)
 		{
 			if(!ModelState.IsValid) { return BadRequest(ModelState); }
+			if (await _userManager.FindByEmailAsync(userModel.Email)  is not null)
+			{
+				return BadRequest("Email Is Found Befor");
+			}
+			if (await _userManager.FindByEmailAsync(userModel.UserName) is not null)
+			{
+				return BadRequest("UserName Is Found Befor");
+			}
+			var user  = new ApplicationUser()
+			{
+				UserName = userModel.UserName,
+				Email = userModel.Email,
+				FristName= userModel.FristName,
+				LastName= userModel.LastName
+			};
+		var resut=	 await _userManager.CreateAsync(user);
+			if (!resut.Succeeded) { return BadRequest(); }
+
+
 			return Ok();
+		}
+
+		[HttpPost("Login")]
+		public  IActionResult Login(LoginDTO model)
+		{
+			return Unauthorized("In valid userName");
 		}
 
 
