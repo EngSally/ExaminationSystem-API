@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="4.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.14" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.14" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.14" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.14" />

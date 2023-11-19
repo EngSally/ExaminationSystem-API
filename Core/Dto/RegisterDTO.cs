@@ -16,7 +16,6 @@ namespace ExaminationSystem.Core.Dto
 		public string LastName { get; set; } = null!;
 		
 		[EmailAddress, MaxLength(100, ErrorMessage = Errors.MaxLength)]
-		[Remote("AllowEmail", null!, AdditionalFields = "Id", ErrorMessage = Errors.Duplicated)]
 		public string Email { get; set; } = null!;
 		[DataType(DataType.Password)]
 		public string Password { get; set; } = null!;
