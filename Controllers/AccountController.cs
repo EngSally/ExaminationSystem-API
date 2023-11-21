@@ -1,6 +1,7 @@
 ﻿using ExaminationSystem.Core.Dto;
 using ExaminationSystem.Core.Model;
 using ExaminationSystem.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -22,11 +23,12 @@ namespace ExaminationSystem.Controllers
 			
 			
 		}
+		[AllowAnonymous]
 		[HttpPost("register")]
 		public  async Task<IActionResult> Register(RegisterDTO userModel)
 		{
 			if(!ModelState.IsValid) return BadRequest(ModelState);
-			var result = await _authService.Registration(userModel);
+			var result = await _authService.RegistrationAsync(userModel);
 			if (!result.IsAuthenticated)
 				return BadRequest(result.Message);
 
@@ -37,15 +39,33 @@ namespace ExaminationSystem.Controllers
 				result.Email
 			});
 		}
-
+		[AllowAnonymous]
 		[HttpPost("Login")]
-		public  IActionResult Login(LoginDTO model)
+		public  async Task <IActionResult> Login(LoginDTO model)
+		{		
+			if(!ModelState.IsValid) return BadRequest(ModelState);
+			var result = await _authService.LoginAsync(model);
+			if (!result.IsAuthenticated)
+				return BadRequest(result.Message);
+
+			return Ok(new
+			{
+				result.UserName,
+				result.Token,
+				result.ExpiresOn,
+				result.Email
+			});
+		}
+		[Authorize]
+		[HttpGet("ChackToken")]
+		public ActionResult  ChackToken()
 		{
-			return Unauthorized("In valid userName");
+			return Ok("Uthorize");
 		}
 
 
 
-	
+
+
 	}
 }

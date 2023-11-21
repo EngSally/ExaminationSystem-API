@@ -19,7 +19,7 @@ namespace ExaminationSystem.Services
 			_roleManger = roleManger;
 			_configuration = configuration;
 		}
-		public async Task<AuthModelDto> Registration(RegisterDTO model)
+		public async Task<AuthModelDto> RegistrationAsync(RegisterDTO model)
 		{
 			if (await _userManager.FindByEmailAsync(model.Email) is not null)
 				return new AuthModelDto { Message = "Email Is Found Befor" };
@@ -58,6 +58,27 @@ namespace ExaminationSystem.Services
 			};
 		}
 
+
+
+
+		public async	Task<AuthModelDto> LoginAsync(LoginDTO login)
+		{
+			 var user=await _userManager.FindByEmailAsync(login.Email);
+			 if (user is null) return new() { Message = "InValid UserName or Password" };
+			 if(!await _userManager.CheckPasswordAsync(user, login.Password))
+				return new() { Message = "InValid UserName or Password" };
+			var jwtSecurityToken = await CreateJwtToken(user);
+			return new AuthModelDto
+			{
+				Email = user.Email,
+				ExpiresOn = jwtSecurityToken.ValidTo,
+				IsAuthenticated = true,
+				Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
+				UserName = user.UserName
+			};
+
+
+		}
 		private async Task<JwtSecurityToken> CreateJwtToken(ApplicationUser user)
 		{
 			var userClaims = await _userManager.GetClaimsAsync(user);
